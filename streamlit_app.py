@@ -24,12 +24,16 @@ st.markdown("""
         background-color: #FFFACD;
         color: black;
         font-weight: bold;
-        font-size: 180px;
-        height: 300px;
+        font-size: 150px;
+        height: 250px;
         width: 100%;
+        min-width: 250px;
+        aspect-ratio: 1/1;
         border-radius: 20px;
         border: 6px solid #8B4513;
-        line-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 0;
     }
     .stButton>button:hover {
@@ -37,7 +41,13 @@ st.markdown("""
         transform: scale(1.02);
     }
     [data-testid="column"] {
-        padding: 10px;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+    }
+    .stButton {
+        width: 100%;
+        max-width: 250px;
     }
 </style>
 """, unsafe_allow_html=True)
