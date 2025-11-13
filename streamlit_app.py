@@ -68,7 +68,7 @@ jumpscare_html = """
 </style>
 
 <div id="jumpscare">
-    <img src="https://i.imgur.com/xP5Eo3a.gif" alt="scary">
+    <img src="https://media.tenor.com/vTd_I2Dpiz0AAAAM/conbopongcuoi.gif" alt="scary">
 </div>
 
 <center>
