@@ -18,20 +18,20 @@ if 'game_over' not in st.session_state:
 st.markdown("""
 <style>
     .main {
-        background-color: #87CEEB;
+        background-color: #FFF8DC;
     }
     .stButton>button {
-        background-color: #8FBC8F;
-        color: white;
+        background-color: #FFFACD;
+        color: black;
         font-weight: bold;
-        font-size: 50px;
-        height: 120px;
+        font-size: 80px;
+        height: 150px;
         width: 100%;
         border-radius: 15px;
-        border: 3px solid #654321;
+        border: 4px solid #8B4513;
     }
     .stButton>button:hover {
-        background-color: #7BA77B;
+        background-color: #FFEC8B;
         transform: scale(1.05);
     }
 </style>
