@@ -40,9 +40,9 @@ jumpscare_html = """
         animation: shake 0.1s infinite;
     }
     #jumpscare img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
     }
     @keyframes shake {
         0%, 100% { transform: translate(0, 0) rotate(0deg); }
