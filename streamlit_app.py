@@ -1,17 +1,18 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import random
 
 # Page config
-st.set_page_config(page_title="Farm Battle - 2 Players", page_icon="🎮", layout="wide")
+st.set_page_config(page_title="Farm Tic-Tac-Toe", page_icon="🌾", layout="wide")
 
-# Initialize session state for game
-if 'player1_score' not in st.session_state:
-    st.session_state.player1_score = 0
-if 'player2_score' not in st.session_state:
-    st.session_state.player2_score = 0
-if 'game_round' not in st.session_state:
-    st.session_state.game_round = 1
+# Initialize session state for tic-tac-toe
+if 'board' not in st.session_state:
+    st.session_state.board = [''] * 9
+if 'current_player' not in st.session_state:
+    st.session_state.current_player = '🌾'  # Wheat for player 1
+if 'winner' not in st.session_state:
+    st.session_state.winner = None
+if 'game_over' not in st.session_state:
+    st.session_state.game_over = False
 
 # Custom CSS
 st.markdown("""
@@ -20,30 +21,25 @@ st.markdown("""
         background-color: #87CEEB;
     }
     .stButton>button {
-        background-color: #FFD700;
-        color: #8B4513;
+        background-color: #8FBC8F;
+        color: white;
         font-weight: bold;
-        border-radius: 10px;
+        font-size: 50px;
+        height: 120px;
         width: 100%;
-    }
-    .player1-section {
-        border: 3px solid #FF6B6B;
-        padding: 20px;
         border-radius: 15px;
-        background-color: rgba(255, 107, 107, 0.1);
+        border: 3px solid #654321;
     }
-    .player2-section {
-        border: 3px solid #4ECDC4;
-        padding: 20px;
-        border-radius: 15px;
-        background-color: rgba(78, 205, 196, 0.1);
+    .stButton>button:hover {
+        background-color: #7BA77B;
+        transform: scale(1.05);
     }
 </style>
 """, unsafe_allow_html=True)
 
 # Header
-st.title("🎮 Farm Battle - 2 Players 🎮")
-st.subheader(f"Round {st.session_state.game_round} | Race to 100 points!")
+st.title("🌾 Farm Tic-Tac-Toe 🐄")
+st.subheader("Player 1: 🌾 Wheat | Player 2: 🐄 Cow")
 
 # Jumpscare HTML/CSS/JS
 jumpscare_html = """
@@ -115,106 +111,71 @@ jumpscare_html = """
 
 components.html(jumpscare_html, height=150)
 
-# Score Display
+# Game functions
+def check_winner():
+    winning_combinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],  # Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],  # Columns
+        [0, 4, 8], [2, 4, 6]              # Diagonals
+    ]
+    
+    for combo in winning_combinations:
+        if (st.session_state.board[combo[0]] == st.session_state.board[combo[1]] == 
+            st.session_state.board[combo[2]] != ''):
+            return st.session_state.board[combo[0]]
+    
+    if '' not in st.session_state.board:
+        return 'Draw'
+    
+    return None
+
+def reset_game():
+    st.session_state.board = [''] * 9
+    st.session_state.current_player = '🌾'
+    st.session_state.winner = None
+    st.session_state.game_over = False
+
+def make_move(index):
+    if not st.session_state.game_over and st.session_state.board[index] == '':
+        st.session_state.board[index] = st.session_state.current_player
+        winner = check_winner()
+        
+        if winner:
+            st.session_state.winner = winner
+            st.session_state.game_over = True
+        else:
+            st.session_state.current_player = '🐄' if st.session_state.current_player == '🌾' else '🌾'
+
+# Game status
 st.markdown("---")
-score_col1, score_col2, score_col3 = st.columns([1, 1, 1])
-with score_col1:
-    st.metric("🔴 Player 1", f"{st.session_state.player1_score} points")
-with score_col2:
-    if st.button("🔄 Reset Game"):
-        st.session_state.player1_score = 0
-        st.session_state.player2_score = 0
-        st.session_state.game_round = 1
-        st.rerun()
-with score_col3:
-    st.metric("🔵 Player 2", f"{st.session_state.player2_score} points")
-
-st.markdown("---")
-
-# Player sections
-p1_col, p2_col = st.columns(2)
-
-with p1_col:
-    st.markdown('<div class="player1-section">', unsafe_allow_html=True)
-    st.markdown("### 🔴 PLAYER 1")
-    
-    st.markdown("#### 🌾 Harvest Crops")
-    if st.button("🌻 Harvest Wheat", key="p1_wheat"):
-        points = random.randint(5, 15)
-        st.session_state.player1_score += points
-        st.success(f"Harvested! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    if st.button("🌽 Harvest Corn", key="p1_corn"):
-        points = random.randint(10, 20)
-        st.session_state.player1_score += points
-        st.success(f"Harvested! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    st.markdown("#### 🐓 Feed Animals")
-    if st.button("🐔 Feed Chicken", key="p1_chicken"):
-        points = random.randint(3, 8)
-        st.session_state.player1_score += points
-        st.success(f"Fed! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    if st.button("🐄 Feed Cow", key="p1_cow"):
-        points = random.randint(8, 12)
-        st.session_state.player1_score += points
-        st.success(f"Fed! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with p2_col:
-    st.markdown('<div class="player2-section">', unsafe_allow_html=True)
-    st.markdown("### 🔵 PLAYER 2")
-    
-    st.markdown("#### 🌾 Harvest Crops")
-    if st.button("🌻 Harvest Wheat", key="p2_wheat"):
-        points = random.randint(5, 15)
-        st.session_state.player2_score += points
-        st.success(f"Harvested! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    if st.button("🌽 Harvest Corn", key="p2_corn"):
-        points = random.randint(10, 20)
-        st.session_state.player2_score += points
-        st.success(f"Harvested! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    st.markdown("#### 🐓 Feed Animals")
-    if st.button("🐔 Feed Chicken", key="p2_chicken"):
-        points = random.randint(3, 8)
-        st.session_state.player2_score += points
-        st.success(f"Fed! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    if st.button("🐄 Feed Cow", key="p2_cow"):
-        points = random.randint(8, 12)
-        st.session_state.player2_score += points
-        st.success(f"Fed! +{points} points")
-        st.session_state.game_round += 1
-        st.rerun()
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Check for winner
-st.markdown("---")
-if st.session_state.player1_score >= 100:
-    st.balloons()
-    st.success("🎉 PLAYER 1 WINS! 🎉")
-    st.markdown(f"**Final Score:** Player 1: {st.session_state.player1_score} | Player 2: {st.session_state.player2_score}")
-elif st.session_state.player2_score >= 100:
-    st.balloons()
-    st.success("🎉 PLAYER 2 WINS! 🎉")
-    st.markdown(f"**Final Score:** Player 1: {st.session_state.player1_score} | Player 2: {st.session_state.player2_score}")
+if st.session_state.game_over:
+    if st.session_state.winner == 'Draw':
+        st.warning("🤝 It's a Draw!")
+    else:
+        st.balloons()
+        winner_name = "Player 1 (🌾 Wheat)" if st.session_state.winner == '🌾' else "Player 2 (🐄 Cow)"
+        st.success(f"🎉 {winner_name} WINS! 🎉")
 else:
-    st.info("🎯 First player to reach 100 points wins!")
+    player_name = "Player 1's turn (🌾 Wheat)" if st.session_state.current_player == '🌾' else "Player 2's turn (🐄 Cow)"
+    st.info(f"🎮 {player_name}")
+
+if st.button("🔄 New Game", key="reset"):
+    reset_game()
+    st.rerun()
+
+st.markdown("---")
+
+# Tic-Tac-Toe Board
+st.markdown("### 🎯 Game Board")
+for row in range(3):
+    cols = st.columns(3)
+    for col in range(3):
+        index = row * 3 + col
+        with cols[col]:
+            button_label = st.session_state.board[index] if st.session_state.board[index] else '🟫'
+            if st.button(button_label, key=f"cell_{index}", disabled=st.session_state.game_over or st.session_state.board[index] != ''):
+                make_move(index)
+                st.rerun()
+
+st.markdown("---")
+st.info("📋 Rules: Get 3 in a row (horizontal, vertical, or diagonal) to win!")
