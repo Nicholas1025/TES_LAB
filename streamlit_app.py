@@ -24,15 +24,20 @@ st.markdown("""
         background-color: #FFFACD;
         color: black;
         font-weight: bold;
-        font-size: 120px;
-        height: 200px;
+        font-size: 180px;
+        height: 300px;
         width: 100%;
-        border-radius: 15px;
-        border: 4px solid #8B4513;
+        border-radius: 20px;
+        border: 6px solid #8B4513;
+        line-height: 300px;
+        padding: 0;
     }
     .stButton>button:hover {
         background-color: #FFEC8B;
-        transform: scale(1.05);
+        transform: scale(1.02);
+    }
+    [data-testid="column"] {
+        padding: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
